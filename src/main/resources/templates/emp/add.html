@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<!-- saved from url=(0052)http://getbootstrap.com/docs/4.0/examples/dashboard/ -->
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+		<meta name="description" content="">
+		<meta name="author" content="">
+
+		<title>Dashboard Template for Bootstrap</title>
+		<!-- Bootstrap core CSS -->
+		<link href="asserts/css/bootstrap.min.css" th:href="@{/webjars/bootstrap/css/bootstrap.css}" rel="stylesheet">
+
+		<!-- Custom styles for this template -->
+		<link href="asserts/css/dashboard.css" th:href="@{/asserts/css/dashboard.css}" rel="stylesheet">
+		<style type="text/css">
+			/* Chart.js */
+			
+			@-webkit-keyframes chartjs-render-animation {
+				from {
+					opacity: 0.99
+				}
+				to {
+					opacity: 1
+				}
+			}
+			
+			@keyframes chartjs-render-animation {
+				from {
+					opacity: 0.99
+				}
+				to {
+					opacity: 1
+				}
+			}
+			
+			.chartjs-render-monitor {
+				-webkit-animation: chartjs-render-animation 0.001s;
+				animation: chartjs-render-animation 0.001s;
+			}
+		</style>
+	</head>
+
+	<body>
+		<!--引入抽取的topbar-->
+		<!--模板名：会使用thymeleaf的前后缀配置规则进行解析-->
+		<div th:replace="commons/topbar::topbar"></div>
+
+		<div class="container-fluid">
+			<div class="row">
+				<!--引入侧边栏-->
+				<div th:replace="commons/sidebar::#sidebar(activeUri='empList.list')"></div>
+
+				<main role="main" class="col-md-9 ml-sm-auto col-lg-10 pt-3 px-4">
+
+					<form class="form-horizontal" role="form" id="empAddForm" th:action="@{/emp}" method="post">
+						<div class="form-group">
+							<h2 class="text-center">员工信息注册</h2>
+						</div>
+						<div class="form-group">
+							<label for="empno" class="col-sm-2 control-label">empno：</label>
+
+							<div class="col-sm-5">
+							<input id="empno" name="empno" type="text" class="form-control" required>
+							</div>
+
+						</div>
+						<div class="form-group">
+							<label for="ename" class="col-sm-2 control-label">ename</label>
+							<div class="col-sm-5">
+							<input id="ename" name="ename" type="text" class="form-control" required>
+							</div>
+						</div>
+						<div class="form-group">
+							<label class="col-sm-2 control-label">job</label>
+							<div class="col-sm-5">
+							<input name="job" type="text" class="form-control" required>
+							</div>
+						</div>
+						<div class="form-group">
+							<label class="col-sm-2 control-label">mgr</label>
+							<div class="col-sm-5">
+							<select class="form-control" name="mgr" required>
+								<option selected>请选择</option>
+								<option th:each="emp:${employeeList}"  th:value="${emp.empno}"  th:text="${emp.ename}">1</option>
+							</select>
+							</div>
+						</div>
+						<div class="form-group">
+							<label class="col-sm-2 control-label">hiredate</label>
+							<div class="col-sm-5">
+							<input name="hiredate" type="date" class="form-control" required>
+							</div>
+						</div>
+						<div class="input-group">
+							<label class="col-sm-2 control-label">sal</label>
+							<div class="col-sm-5">
+							<div class="input-group-prepend">
+								<span class="input-group-text">¥</span>
+							</div>
+							<input name="sal" type="number" class="form-control" required>
+							<div class="input-group-append">
+								<span class="input-group-text">.00</span>
+							</div>
+							</div>
+						</div>
+						<div class="input-group">
+							<label class="col-sm-2 control-label">bonus</label>
+							<div class="col-sm-5">
+							<div class="input-group-prepend">
+								<span class="input-group-text">¥</span>
+							</div>
+							<input name="bonus" type="number" class="form-control" required>
+							<div class="input-group-append">
+								<span class="input-group-text">.00</span>
+							</div>
+							</div>
+						</div>
+						<div class="form-group">
+							<label class="col-sm-2 control-label">department</label>
+							<div class="col-sm-5">
+							<!--提交的是部门的deptno-->
+							<select class="form-control" name="department.deptno" required>
+								<option selected >请选择</option>
+								<option th:each="dept:${departmentList}" th:value="${dept.deptno}" th:text="${dept.dname}">1</option>
+							</select>
+							</div>
+						</div>
+						<button type="submit" class="btn btn-primary" >保存</button>
+					</form>
+				</main>
+			</div>
+		</div>
+
+		<script>
+            // Example starter JavaScript for disabling form submissions if there are invalid fields
+            (function() {
+                'use strict';
+                window.addEventListener('load', function() {
+                    // Fetch all the forms we want to apply custom Bootstrap validation styles to
+                    var forms = document.getElementById('empAddForm');
+                    // Loop over them and prevent submission
+                    var validation = Array.prototype.filter.call(forms, function(form) {
+                        form.addEventListener('submit', function(event) {
+                            console.log(event);
+                            console.log(form);
+                            if (form.checkValidity() === false) {
+                                event.preventDefault();
+                                event.stopPropagation();
+                            }
+                            form.classList.add('was-validated');
+                        }, false);
+                    });
+                }, false);
+            })();
+		</script>
+		<!-- Bootstrap core JavaScript
+    ================================================== -->
+		<!-- Placed at the end of the document so the pages load faster -->
+		<script type="text/javascript" src="asserts/js/jquery-3.2.1.slim.min.js" th:src="@{/webjars/jquery/jquery.js}"></script>
+		<script type="text/javascript" src="asserts/js/popper.min.js" th:src="@{/webjars/popper.js/umd/popper.js}"></script>
+		<script type="text/javascript" src="asserts/js/bootstrap.min.js" th:src="@{/webjars/bootstrap/js/bootstrap.js}"></script>
+
+		<!-- Icons -->
+		<script type="text/javascript" src="asserts/js/feather.min.js" th:src="@{/asserts/js/feather.min.js}"></script>
+		<script>
+			feather.replace()
+		</script>
+
+	</body>
+
+</html>

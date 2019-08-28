@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cui.repair.store.dao.LoginRecordDao">
+    <insert id="insert" parameterType="loginRecord">
+        INSERT into tbl_login_records (username,locked,times)
+        VALUES (#{username},#{locked},#{times})
+    </insert>
+
+    <select id="getLatestRecordBy" parameterType="string"
+            resultType="loginRecord">
+        SELECT * FROM  tbl_login_records
+        <where>
+            <if test="_parameter != null">
+                username=#{username} and
+            </if>
+            DATE_FORMAT(logindate, '%Y%m' )
+            = DATE_FORMAT( CURDATE( ) , '%Y%m' )
+            ORDER BY logindate DESC;
+        </where>
+    </select>
+    <select id="getLogin2TimesBy" parameterType="string"
+            resultType="loginRecord">
+        SELECT * FROM  tbl_login_records
+        <where>
+            <if test="_parameter != null">
+                username=#{username}
+            </if>
+            times = 2;
+        </where>
+    </select>
+    
+    <select id="isExistLoginRecordBy"
+            parameterType="string"
+            resultType="int"
+    >
+        SELECT COUNT(*) num FROM tbl_login_records
+        <where>
+            <if test="_parameter != null">
+                username=#{username}
+            </if>
+        </where>
+    </select>
+
+   <delete id="delete" parameterType="string" >
+       DELETE FROM tbl_login_records
+       <where>
+           <if test="_parameter != null">
+               username=#{username}
+           </if>
+       </where>
+   </delete>
+
+</mapper>

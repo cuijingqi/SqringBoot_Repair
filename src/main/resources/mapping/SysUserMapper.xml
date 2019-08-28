@@ -1,0 +1,166 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cui.repair.store.dao.SysUserDao">
+
+    <select id="findByUserCode" parameterType="string"
+            resultType="cui.repair.store.entity.SysUser">
+        SELECT * FROM sys_user WHERE usercode = #{usercode}
+    </select>
+
+
+    <insert id="saveUser" parameterType="cui.repair.store.entity.SysUser">
+        <selectKey keyProperty="id" resultType="java.lang.String" order="BEFORE">
+            select uuid();
+        </selectKey>
+        INSERT INTO  sys_user (id,usercode,username,userpwd,salt,locked) value (#{id},#{usercode},#{username},#{userpwd},'newedu',0)
+    </insert>
+
+    <update id="updateUser" parameterType="cui.repair.store.entity.SysUser" >
+        UPDATE sys_user
+        <set>
+            /*_parameter 指代的是用户输入的参数*/
+            <if test="usercode != null">
+                usercode = #{usercode},
+            </if>
+            <if test="username != null">
+                username = #{username},
+            </if>
+
+            <if test="userpwd != null and userpwd!=''">
+                userpwd = #{userpwd},
+            </if>
+            <if test="locked != null">
+                locked = #{locked},
+            </if>
+
+        </set>
+        where id = #{id}
+    </update>
+
+
+    <delete id="deleteUser" parameterType="java.lang.String" >
+        DELETE FROM  sys_user
+        where id = #{id}
+    </delete>
+
+
+
+
+
+    <select id="findPermissionsByUserId" parameterType="string" resultType="cui.repair.store.entity.SysPermission">
+        SELECT * FROM sys_permission WHERE TYPE='permission' AND id IN (
+        SELECT sys_permission_id FROM sys_role_permission WHERE sys_role_id IN
+        (SELECT sys_role_id FROM sys_user_role WHERE sys_user_id = #{sys_user_id})
+        )
+    </select>
+
+    <select id="selectAll" resultType="cui.repair.store.entity.SysUser">
+         SELECT * FROM sys_user  order by sys_user.usercode
+    </select>
+
+    <select id="selectAllByRoleId" resultType="cui.repair.store.entity.SysUser">
+         SELECT
+sys_user.id,
+sys_user.usercode,
+sys_user.username,
+sys_user.userpwd,
+sys_user.salt,
+sys_user.locked,
+sys_role.id roleid,
+sys_role.rolename,
+sys_role.available,
+
+sys_user_role.sys_user_id,
+sys_user_role.sys_role_id
+FROM
+sys_user ,
+sys_role ,
+sys_user_role
+
+where
+sys_user.id=sys_user_role.sys_user_id
+and
+sys_role.id=sys_user_role.sys_role_id
+
+and
+sys_role.id='eb7c9189-61ab-11e9-be1c-507b9dce6747'
+
+    </select>
+    <!--保存中间表的操作-->
+    <insert id="saveUserRole" parameterType="list">
+        <selectKey keyProperty="id" resultType="java.lang.String" order="BEFORE">
+            select uuid();
+        </selectKey>
+        INSERT INTO sys_user_role VALUES
+        <foreach collection="list" item="map" separator=",">
+            /*这里遍历的字段与Employee中维护中间表对应*/
+            (#{id},#{map.sys_user_id},#{map.sys_role_id})
+        </foreach>
+    </insert>
+
+
+     <delete id="deleteUserRole" parameterType="String">
+           delete from sys_user_role where sys_user_id=#{id}
+     </delete>
+
+     <insert id="updateUserRole" parameterType="Map">
+         <selectKey keyProperty="id" resultType="java.lang.String" order="BEFORE">
+             select uuid();
+         </selectKey>
+           insert into sys_user_role (id,sys_user_id,sys_role_id) values (#{id},#{sys_user_id},#{sys_role_id})
+     </insert>
+
+
+    <select id="querUserById" parameterType="String" resultMap="userMape">
+SELECT
+sys_user.id,
+sys_user.usercode,
+sys_user.username,
+sys_user.userpwd,
+sys_user.salt,
+sys_user.locked
+FROM
+sys_user
+WHERE
+sys_user.id=#{id}
+
+    </select>
+
+
+     <select id="querRoleById" parameterType="String" resultType="cui.repair.store.entity.SysRole" >
+
+SELECT
+sys_role.id,
+sys_role.rolename,
+sys_role.available,
+sys_user_role.sys_user_id,
+sys_user_role.sys_role_id
+FROM
+sys_role ,
+sys_user_role
+where
+sys_user_role.sys_role_id=sys_role.id
+and
+sys_user_role.sys_user_id=#{id}
+
+
+     </select>
+   <resultMap id="userMape" type="cui.repair.store.entity.SysUser">
+      <id column="id" property="id"></id>
+      <result column="usercode" property="usercode"></result>
+      <result column="username" property="username"></result>
+      <result column="userpwd" property="userpwd"></result>
+      <result column="salt" property="salt"></result>
+      <result column="locked" property="locked"></result>
+       <collection property="sysRoles" ofType="cui.repair.store.entity.SysRole" column="id" select="cui.repair.store.dao.SysUserDao.querRoleById">
+           <id column="id" property="id"></id>
+           <result property="rolename" column="rolename" />
+           <result property="available" column="available"/>
+       </collection>
+   </resultMap>
+
+
+
+</mapper>

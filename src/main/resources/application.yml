@@ -1,0 +1,51 @@
+#设置项目的名称和端口
+server:
+  port: 8090
+  servlet:
+    context-path: /repair
+  tomcat:
+    uri-encoding: utf-8
+
+#设置当前项目日志的输出级别
+logging:
+  level:
+    com:
+      newedu: debug
+  #当前磁盘根目录下的spring文件夹创建日志文件目录，使用默认的日志文件名
+  path: /springboot/log
+  pattern:
+  # "%d{dd} 输出日期 %-5level 输出日志级别 %logger{50} - %msg%n"
+    console: "%d{yyyy-MM-dd}  %-5level %logger{0} - %msg%n"
+spring:
+  datasource:
+    url: jdbc:mysql://localhost:3306/store?useSSL=false&useAffectedRows=true&useUnicode=true&characterEncoding=UTF-8&serverTimezone=UTC
+    username: root
+    password: 1234521c
+    hikari:
+          pool-name: shiro-demo-02-db-pool
+          max-lifetime: 1800000
+          connection-timeout: 30000
+          connection-test-query: SELECT 1
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  thymeleaf:
+    cache: false
+  messages:
+    basename: i18n.login
+    encoding: UTF-8
+  http:
+    encoding:
+      charset: utf-8
+      enabled: true
+      force: true
+# 上传文件总的最大值
+# 单个文件的最大值
+  servlet:
+    multipart:
+      max-file-size: 10MB
+      max-request-size: 10MB
+  resources:
+    static-locations: classpath:/META-INF/resources/,classpath:/resources/,classpath:/static/,classpath:/public/,file:classpath:/static/upload/
+
+mybatis:
+  mapper-locations: classpath:mapping/*.xml
+  type-aliases-package: cui.repair.store.entity

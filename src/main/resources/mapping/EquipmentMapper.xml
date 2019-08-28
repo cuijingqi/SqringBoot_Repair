@@ -1,0 +1,161 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cui.repair.store.dao.EquipmentDao">
+
+    <select id="selectOne" parameterType="java.lang.Integer"
+            resultType="Equipment"
+            >
+        SELECT * FROM  equipment
+        <where>
+            <if test="_parameter != null">
+                id = #{id}
+            </if>
+        </where>
+    </select>
+
+    <insert id="insert" parameterType="Equipment"
+         >
+        INSERT into equipment (equipment_id,equipment_name,equipment_type,createtime,responsible_person,remark)
+        VALUES (#{equipment_id},#{equipment_name},#{equipment_type},now(),#{responsible_person},#{remark})
+    </insert>
+
+
+    <update id="update" parameterType="Equipment" >
+        UPDATE equipment
+        <set>
+            /*_parameter 指代的是用户输入的参数*/
+            <if test="equipment_id != null">
+                equipment_id = #{equipment_id},
+            </if>
+            <if test="equipment_name != null">
+                equipment_name = #{equipment_name},
+            </if>
+
+            <if test="equipment_type != null">
+                equipment_type = #{equipment_type},
+            </if>
+            <if test="responsible_person != null">
+                responsible_person = #{responsible_person},
+            </if>
+            <if test="remark != null">
+                remark = #{remark},
+            </if>
+        </set>
+        where id = #{id}
+    </update>
+
+    <select id="selectAll"
+            resultMap="equipmentMap">
+                    SELECT
+                    equipment.id,
+                    equipment.equipment_id,
+                    equipment.equipment_name,
+                    equipment.equipment_type,
+                    equipment.createtime,
+                    equipment.responsible_person,
+                    equipment.remark
+                    FROM
+                    equipment
+
+    </select>
+
+
+
+
+
+
+
+    <delete id="delete" parameterType="java.lang.Integer" >
+        DELETE FROM  equipment
+        where id = #{id}
+    </delete>
+
+
+    
+
+    <!--sql代码片段-->
+    <sql id="equipmentColumns" >
+        <trim suffixOverrides=",">
+            <if test="equipment_id != null">
+                equipment_id,
+            </if>
+            <if test="equipment_name !=null">
+                equipment_name,
+            </if>
+            <if test="equipment_type !=null">
+                equipment_type,
+            </if>
+            <if test="createtime !=null ">
+                createtime,
+            </if>
+            <if test="responsible_person !=null">
+                responsible_person,
+            </if>
+            <if test="remark !=null">
+                remark,
+            </if>
+        </trim>
+    </sql>
+    <!--sql代码片段-->
+    <sql id="equipmentValues" >
+        <trim suffixOverrides=",">
+            <if test="equipment_id != null">
+                #{equipment_id},
+            </if>
+            <if test="equipment_name !=null">
+                #{equipment_name},
+            </if>
+            <if test="equipment_type !=null">
+                #{equipment_type},
+            </if>
+            <if test="createtime !=null ">
+                #{createtime},
+            </if>
+            <if test="responsible_person !=null">
+                #{responsible_person},
+            </if>
+            <if test="remark !=null">
+                #{remark},
+            </if>
+        </trim>
+    </sql>
+
+    <!--使用sql代码片段来插入数据-->
+    <insert id="insertEmp2"
+            parameterType="Equipment"
+            >
+        /*refid = reference id*/
+
+        INSERT  into equipment (<include refid="equipmentColumns"/> )
+        VALUES (<include refid="equipmentValues"/>)
+    </insert>
+
+
+    <!--模糊查询-->
+
+    <select id="getEquipmentLikeByName"
+            parameterType="string"
+            resultMap="equipmentMap">
+        select * from equipment
+        <if test="_parameter!=null">
+            where equipment_name like  '%${_parameter}%'
+        </if>;
+    </select>
+
+
+    <!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="cui.repair.store.entity.Equipment" id="equipmentMap">
+        <result property="id" column="id"/>
+        <result property="equipment_id" column="equipment_id"/>
+        <result property="equipment_name" column="equipment_name"/>
+        <result property="equipment_type" column="equipment_type"/>
+        <result property="createtime" column="createtime"/>
+        <result property="responsible_person" column="responsible_person"/>
+        <result property="remark" column="remark"/>
+    </resultMap>
+
+
+
+</mapper>

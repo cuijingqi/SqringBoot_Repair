@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cui.repair.store.dao.BuildingDao">
+
+    <select id="selectOne" parameterType="java.lang.Integer"
+            resultType="Building">
+        SELECT * FROM  building
+        <where>
+            <if test="_parameter != null">
+                id = #{id}
+            </if>
+        </where>
+    </select>
+
+    <insert id="insert" parameterType="Building">
+        INSERT into building (buildingName)
+        VALUES (#{buildingName})
+    </insert>
+
+
+    <update id="update" parameterType="Building" >
+        UPDATE building
+        <set>
+            /*_parameter 指代的是用户输入的参数*/
+            <if test="buildingName != null">
+                buildingName = #{buildingName},
+            </if>
+        </set>
+        where id = #{id}
+    </update>
+
+    <select id="selectAll"
+            resultMap="buildingMap">
+                   SELECT
+                building.id,
+                building.buildingName
+                FROM
+                building
+
+    </select>
+
+
+
+
+
+
+
+    <delete id="delete" parameterType="java.lang.Integer" >
+        DELETE FROM  building
+        where id = #{id}
+    </delete>
+
+
+    
+
+    <!--sql代码片段-->
+    <sql id="buildingColumns" >
+        <trim suffixOverrides=",">
+            <if test="buildingName != null">
+                buildingName,
+            </if>
+
+        </trim>
+    </sql>
+    <!--sql代码片段-->
+    <sql id="buildingValues" >
+        <trim suffixOverrides=",">
+            <if test="buildingName != null">
+                #{buildingName},
+            </if>
+        </trim>
+    </sql>
+
+    <!--使用sql代码片段来插入数据-->
+    <insert id="insertEmp2"
+            parameterType="Building">
+        /*refid = reference id*/
+
+        INSERT  into building (<include refid="buildingColumns"/> )
+        VALUES (<include refid="buildingValues"/>)
+    </insert>
+
+
+    <!--模糊查询-->
+
+    <select id="getBuildingLikeByName"
+            parameterType="string"
+            resultMap="buildingMap">
+        select * from building
+        <if test="_parameter!=null">
+            where buildingName like  '%${_parameter}%'
+        </if>;
+    </select>
+
+
+    <!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="cui.repair.store.entity.Building" id="buildingMap">
+        <result property="id" column="id"/>
+        <result property="buildingName" column="buildingName"/>
+    </resultMap>
+</mapper>

@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cui.repair.store.dao.SysRoleDao">
+
+    <select id="findByRoleId" parameterType="string"
+            resultType="cui.repair.store.entity.SysRole">
+        SELECT * FROM sys_role WHERE id = #{id}
+    </select>
+
+
+    <insert id="saveRole" parameterType="cui.repair.store.entity.SysRole">
+        <selectKey keyProperty="id" resultType="java.lang.String" order="BEFORE">
+            select uuid();
+        </selectKey>
+        INSERT INTO  sys_role (id,sys_user_id,sys_reole_id,userpwd,salt,locked) value (#{id},#{usercode},#{username},#{userpwd},'newedu',0)
+    </insert>
+
+    <update id="updateRole" parameterType="cui.repair.store.entity.SysRole" >
+        UPDATE sys_role
+        <set>
+            /*_parameter 指代的是用户输入的参数*/
+            <if test="usercode != null">
+                usercode = #{usercode},
+            </if>
+            <if test="username != null">
+                username = #{username},
+            </if>
+
+            <if test="userpwd != null">
+                userpwd = #{userpwd},
+            </if>
+            <if test="locked != null">
+                locked = #{locked},
+            </if>
+
+        </set>
+        where id = #{id}
+    </update>
+
+
+    <delete id="deleteRole" parameterType="java.lang.String" >
+        DELETE FROM  sys_role
+        where id = #{id}
+    </delete>
+
+
+
+
+
+
+
+    <select id="selectAll" resultType="cui.repair.store.entity.SysRole">
+         SELECT * FROM sys_role
+    </select>
+
+
+
+
+
+
+</mapper>
