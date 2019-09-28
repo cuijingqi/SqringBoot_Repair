@@ -10,7 +10,7 @@ import org.apache.shiro.subject.PrincipalCollection;
 import org.apache.shiro.util.ByteSource;
 
 /**
- * @author 付军
+ * @author 崔靖奇
  * @version 1.0
  * @date 2019/8/7
  * @description 自定义领域

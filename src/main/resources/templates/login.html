@@ -35,7 +35,7 @@
 			<a class="btn btn-sm" th:href="@{/login.html(l='zh_CN')}">中文</a>
 			<a class="btn btn-sm" th:href="@{/login.html(l='en_US')}">English</a>
 		</form>
-
+		<button id="btn" th:width="200px" th:high="100px"/>
         <script type="text/javascript" th:inline="javascript">
             /*<![CDATA[*/
             ctxPath = /*[[@{/}]]*/ '';
@@ -52,6 +52,13 @@
             img.src = ctxPath +'/defaultKaptcha?d='+new Date()*1;
         }
     </script>
+		<script>
+			document.getElementById("btn").onclick=function () {
+				var body=document.getElementsByTagName("body");
+				var ctx = "[[@{/}]]";
+				body[0].style.backgroundImage="url('"+ctx+"asserts/img/bgs.jpg')";
+			};
+		</script>
 	</body>
 
 </html>
